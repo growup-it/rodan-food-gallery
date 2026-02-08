@@ -8,7 +8,7 @@
     
     <style>
         /* ==============================
-           1. CORE & RESET
+           1. CORE & SECURITY
            ============================== */
         :root {
             --red: #D63426;
@@ -20,49 +20,41 @@
         * {
             margin: 0; padding: 0; box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
+            cursor: none; /* Custom cursor everywhere */
+            user-select: none; -webkit-user-select: none; /* No selection */
         }
+
+        img { pointer-events: none; -webkit-user-drag: none; display: block; }
 
         body {
             font-family: 'Montserrat', sans-serif;
             background-color: var(--bg);
             color: var(--text);
-            overflow-x: hidden; /* CRITICAL: Hides the horizontal sway overflow */
+            overflow-x: hidden; /* Critical for sway */
             width: 100%;
         }
 
-        html { scroll-behavior: smooth; overflow-x: hidden; }
+        html { scroll-behavior: smooth; }
 
         /* Custom Scrollbar (Desktop) */
         @media (min-width: 769px) {
             ::-webkit-scrollbar { width: 6px; }
             ::-webkit-scrollbar-track { background: var(--bg); }
             ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 3px; }
-            * { cursor: none; }
         }
 
-        img { pointer-events: none; -webkit-user-drag: none; display: block; }
-
         /* ==============================
-           2. THE "GIGGLE" ANIMATION
+           2. THE "GIGGLE" (SWAY) ANIMATION
            ============================== */
-        @keyframes giggle-sway {
+        @keyframes gentle-sway {
             0% { transform: translateX(0px); }
-            25% { transform: translateX(3px); } /* Move Right */
-            50% { transform: translateX(0px); }
-            75% { transform: translateX(-3px); } /* Move Left */
+            50% { transform: translateX(-5px); } /* Move Left */
             100% { transform: translateX(0px); }
         }
 
-        /* Apply to the wrapper that holds all content */
-        .giggle-wrapper {
-            animation: giggle-sway 2s infinite ease-in-out;
-            width: 100%;
-            overflow-x: hidden;
-        }
-
-        /* Apply to Header separately so it stays Fixed but still Wiggles */
-        header.giggle-header {
-            animation: giggle-sway 2s infinite ease-in-out;
+        /* We animate wrappers, NOT the body, to keep scrolling safe */
+        .sway-element {
+            animation: gentle-sway 3s ease-in-out infinite;
         }
 
         /* ==============================
@@ -75,6 +67,7 @@
         }
         @media (max-width: 768px) { .noise-overlay { display: none; } }
 
+        /* Custom Cursor Logic */
         .cursor-dot, .cursor-outline { display: none; }
         @media (min-width: 769px) {
             .cursor-dot, .cursor-outline { display: block; }
@@ -101,6 +94,8 @@
             position: fixed; width: 100%; padding: 30px 50px;
             display: flex; justify-content: space-between; align-items: center;
             z-index: 100; mix-blend-mode: exclusion;
+            /* Header gets the sway animation too so it matches content */
+            animation: gentle-sway 3s ease-in-out infinite;
         }
         .logo {
             font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 600;
@@ -116,7 +111,9 @@
            5. HERO SECTION
            ============================== */
         .hero {
-            height: 100svh; display: flex; align-items: center; justify-content: center;
+            height: 100vh; /* Fallback */
+            height: 100svh; /* Mobile Friendly */
+            display: flex; align-items: center; justify-content: center;
             position: relative; overflow: hidden;
         }
         .hero-bg {
@@ -148,7 +145,6 @@
             width: 100%; overflow: hidden; padding: 20px 0; background: var(--red); color: #000;
             white-space: nowrap; position: relative; z-index: 5; transform: rotate(-2deg) scale(1.1);
             margin: 50px 0;
-            will-change: transform;
         }
         .marquee-content {
             display: inline-block; animation: scrollLeft 20s linear infinite;
@@ -169,12 +165,15 @@
         .big-text.active { color: #fff; }
 
         .gallery-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 40px;
         }
 
         .art-card {
             background-color: var(--card-bg); border-radius: 8px; position: relative; overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.05); transition: transform 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.05); 
+            transition: transform 0.3s ease;
         }
         
         .card-image { height: 350px; width: 100%; overflow: hidden; position: relative; }
@@ -184,21 +183,21 @@
             filter: grayscale(100%);
         }
         
-        .card-info { padding: 30px; }
-        .card-info h3 { font-family: 'Cormorant Garamond'; font-size: 2rem; color: #fff; margin-bottom: 5px;}
-        .card-info p { font-family: 'Space Mono'; font-size: 0.8rem; color: #666; }
-
         /* Hover Effects (Desktop Only) */
         @media (min-width: 769px) {
             .art-card:hover { transform: translateY(-10px); }
             .art-card:hover .card-image img { filter: grayscale(0%); transform: scale(1.1); }
         }
         @media (max-width: 768px) {
-            .card-image img { filter: grayscale(0%); }
+            .card-image img { filter: grayscale(0%); } /* Always color on mobile */
         }
+        
+        .card-info { padding: 30px; }
+        .card-info h3 { font-family: 'Cormorant Garamond'; font-size: 2rem; color: #fff; margin-bottom: 5px;}
+        .card-info p { font-family: 'Space Mono'; font-size: 0.8rem; color: #666; }
 
         /* ==============================
-           8. MODAL
+           8. MODAL (POP UP)
            ============================== */
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -219,12 +218,15 @@
         .close-btn { position: absolute; top: 15px; right: 15px; color: #fff; font-size: 2rem; cursor: pointer; z-index: 10; padding: 10px;}
 
         /* ==============================
-           9. MOBILE TWEAKS
+           9. RESPONSIVE
            ============================== */
         @media (max-width: 768px) {
-            header { padding: 20px; background: rgba(5,5,5,0.9); flex-direction: column; gap: 15px;}
+            header { padding: 20px; background: rgba(5,5,5,0.9); flex-direction: column; gap: 15px; }
             nav ul { gap: 20px; font-size: 0.8rem; }
             .hero h1 { font-size: 15vw; }
+            section { padding: 80px 0; }
+            .container { padding: 0 20px; }
+            .big-text { font-size: 2rem; margin-bottom: 40px; }
             .gallery-grid { grid-template-columns: 1fr; gap: 30px; }
             .modal-content { grid-template-columns: 1fr; }
             .modal-img { height: 250px; min-height: auto; }
@@ -239,18 +241,18 @@
     <div class="cursor-dot"></div>
     <div class="cursor-outline"></div>
 
-    <header class="giggle-header">
-        <a href="#" class="logo magnetic">Roodan.</a>
+    <header>
+        <a href="#" class="logo magnetic" data-strength="30">Roodan.</a>
         <nav>
             <ul>
-                <li><a href="#studio">The Studio</a></li>
-                <li><a href="#gallery">Dishes</a></li>
-                <li><a href="#dish-ai">Lab</a></li>
+                <li><a href="#studio" class="scramble-link" data-value="The Studio">The Studio</a></li>
+                <li><a href="#gallery" class="scramble-link" data-value="Dishes">Dishes</a></li>
+                <li><a href="#dish-ai" class="scramble-link" data-value="Lab">Lab</a></li>
             </ul>
         </nav>
     </header>
 
-    <div class="giggle-wrapper">
+    <div class="sway-element">
 
         <section class="hero">
             <div class="hero-bg" id="hero-bg"></div>
@@ -285,7 +287,7 @@
                 <h2 class="big-text scroll-reveal">Selected Dishes</h2>
                 <div class="gallery-grid" id="gallery-grid">
                     
-                    <div class="art-card" onclick="openModal('The Cloud', 'A study in texture. Egg whites are whipped to an ethereal, cloud-like peak and gently baked, cradling a rich, molten yolk. Finished with a dusting of oregano, cracked black pepper, and a savory reduction.', 'eggs.png')">
+                    <div class="art-card js-tilt" onclick="openModal('The Cloud', 'A study in texture. Egg whites are whipped to an ethereal, cloud-like peak and gently baked, cradling a rich, molten yolk. Finished with a dusting of oregano, cracked black pepper, and a savory reduction.', 'eggs.png')">
                         <div class="card-image"><img src="eggs.png" alt="The Cloud"></div>
                         <div class="card-info">
                             <h3>The Cloud</h3>
@@ -293,7 +295,7 @@
                         </div>
                     </div>
 
-                    <div class="art-card" onclick="openModal('Crimson Fusion', 'A bold fusion of delicacy and fire. The airy texture of the Cloud Egg is deconstructed and draped in a robust, fermentation-forward Kimchi curry, adding layers of umami and heat.', 'eggs2.png')">
+                    <div class="art-card js-tilt" onclick="openModal('Crimson Fusion', 'A bold fusion of delicacy and fire. The airy texture of the Cloud Egg is deconstructed and draped in a robust, fermentation-forward Kimchi curry, adding layers of umami and heat.', 'eggs2.png')">
                         <div class="card-image"><img src="eggs2.png" alt="Crimson Fusion"></div>
                         <div class="card-info">
                             <h3>Crimson Fusion</h3>
@@ -301,7 +303,7 @@
                         </div>
                     </div>
 
-                    <div class="art-card" onclick="openModal('Golden Earth', 'Simplicity elevated. Potatoes are flash-fried to a golden crisp, then dry-roasted to remove excess oil. Seasoned purely with sea salt, cracked pepper, and oregano to highlight the earthiness of the tuber.', 'potatoes.png')">
+                    <div class="art-card js-tilt" onclick="openModal('Golden Earth', 'Simplicity elevated. Potatoes are flash-fried to a golden crisp, then dry-roasted to remove excess oil. Seasoned purely with sea salt, cracked pepper, and oregano to highlight the earthiness of the tuber.', 'potatoes.png')">
                         <div class="card-image"><img src="potatoes.png" alt="Golden Earth"></div>
                         <div class="card-info">
                             <h3>Golden Earth</h3>
@@ -332,10 +334,60 @@
     </div>
 
     <script>
-        // DETECT IF MOBILE
+        // DETECT MOBILE
         const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
-        // 1. CURSOR (Desktop Only)
+        // 1. SECURITY
+        document.onkeydown = function(e) {
+            if(event.keyCode == 123) return false;
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+        }
+
+        // 2. SCRAMBLE TEXT (Desktop Only)
+        if (!isMobile) {
+            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            document.querySelectorAll(".scramble-link").forEach(item => {
+                item.dataset.value = item.innerText;
+                item.onmouseover = event => {
+                    let iteration = 0;
+                    clearInterval(event.target.interval);
+                    event.target.interval = setInterval(() => {
+                        event.target.innerText = event.target.innerText
+                            .split("").map((letter, index) => {
+                                if(index < iteration) return event.target.dataset.value[index];
+                                return letters[Math.floor(Math.random() * 26)];
+                            }).join("");
+                        if(iteration >= event.target.dataset.value.length) clearInterval(event.target.interval);
+                        iteration += 1 / 3;
+                    }, 30);
+                }
+            });
+        }
+
+        // 3. 3D TILT (Desktop Only)
+        if (!isMobile) {
+            const cards = document.querySelectorAll('.js-tilt');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = ((y - centerY) / centerY) * -8;
+                    const rotateY = ((x - centerX) / centerX) * 8;
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = `perspective(1000px) rotateX(0) rotateY(0)`;
+                });
+            });
+        }
+
+        // 4. CURSOR (Desktop Only)
         if (!isMobile) {
             const cursorDot = document.querySelector('.cursor-dot');
             const cursorOutline = document.querySelector('.cursor-outline');
@@ -350,16 +402,16 @@
             });
         }
 
-        // 2. PARALLAX (Desktop Only)
+        // 5. PARALLAX (Desktop Only)
         if (!isMobile) {
             const heroBg = document.getElementById('hero-bg');
             window.addEventListener('scroll', () => {
                 let scrolled = window.scrollY;
-                heroBg.style.transform = `scale(${1.1 + scrolled * 0.0005})`; // Reduced scale for stability
+                heroBg.style.transform = `scale(${1.1 + scrolled * 0.0005})`;
             });
         }
 
-        // 3. SCROLL REVEAL (Universal)
+        // 6. SCROLL REVEAL (Universal)
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) entry.target.classList.add('active');
@@ -367,7 +419,7 @@
         }, { threshold: 0.1 });
         document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
 
-        // 4. MODAL LOGIC (Universal)
+        // 7. MODAL LOGIC (Universal)
         const modal = document.getElementById('dish-modal');
         const modalImg = document.getElementById('modal-img');
         const modalTitle = document.getElementById('modal-title');
@@ -389,7 +441,7 @@
         }
         window.onclick = function(event) { if (event.target == modal) closeModal(); }
 
-        // 5. MAGNETIC BUTTONS (Desktop Only)
+        // 8. MAGNETIC BUTTONS (Desktop Only)
         if (!isMobile) {
             document.querySelectorAll('.magnetic').forEach(btn => {
                 btn.addEventListener('mousemove', (e) => {
