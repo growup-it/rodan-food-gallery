@@ -44,24 +44,12 @@
         ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 3px; }
 
         /* ==============================
-           2. NOISE & LOADER
+           2. NOISE OVERLAY
            ============================== */
         .noise-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 9000; opacity: 0.05;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-        }
-
-        .loader-curtain {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 20000;
-            display: flex; justify-content: center; align-items: center;
-            transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1);
-        }
-        .loader-curtain.slide-up { transform: translateY(-100%); }
-        .loader-text {
-            font-family: 'Cormorant Garamond'; color: var(--red); font-size: 2rem;
-            animation: pulse 1s infinite;
         }
 
         /* ==============================
@@ -121,11 +109,11 @@
         }
         .reveal-text {
             display: block; transform: translateY(100%); 
-            animation: slideUpText 1s cubic-bezier(0.77, 0, 0.175, 1) forwards 1s;
+            animation: slideUpText 1s cubic-bezier(0.77, 0, 0.175, 1) forwards 0.5s;
         }
         .reveal-text-2 {
             display: block; transform: translateY(100%);
-            animation: slideUpText 1s cubic-bezier(0.77, 0, 0.175, 1) forwards 1.2s;
+            animation: slideUpText 1s cubic-bezier(0.77, 0, 0.175, 1) forwards 0.7s;
             color: var(--red); font-style: italic;
         }
         @keyframes slideUpText { to { transform: translateY(0); } }
@@ -219,10 +207,6 @@
     </style>
 </head>
 <body oncontextmenu="return false;">
-
-    <div class="loader-curtain" id="loader">
-        <div class="loader-text">ROODAN</div>
-    </div>
 
     <div class="noise-overlay"></div>
 
@@ -329,12 +313,7 @@
             if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { return false; }
         }
 
-        // 2. LOADER
-        window.onload = () => {
-            setTimeout(() => { document.getElementById('loader').classList.add('slide-up'); }, 1000);
-        }
-
-        // 3. SCRAMBLE TEXT EFFECT (ON HOVER)
+        // 2. SCRAMBLE TEXT EFFECT (ON HOVER)
         const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         
         document.querySelectorAll(".scramble-link").forEach(item => {
@@ -362,7 +341,7 @@
             }
         });
 
-        // 4. 3D TILT EFFECT
+        // 3. 3D TILT EFFECT
         const cards = document.querySelectorAll('.js-tilt');
         cards.forEach(card => {
             card.addEventListener('mousemove', (e) => {
@@ -384,7 +363,7 @@
             });
         });
 
-        // 5. MODAL LOGIC
+        // 4. MODAL LOGIC
         const modal = document.getElementById('dish-modal');
         const modalImg = document.getElementById('modal-img');
         const modalTitle = document.getElementById('modal-title');
@@ -406,7 +385,7 @@
         }
         window.onclick = function(event) { if (event.target == modal) closeModal(); }
 
-        // 6. CURSOR
+        // 5. CURSOR
         const cursorDot = document.querySelector('.cursor-dot');
         const cursorOutline = document.querySelector('.cursor-outline');
         window.addEventListener('mousemove', (e) => {
@@ -419,7 +398,7 @@
             el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
         });
 
-        // 7. SCROLL REVEAL & PARALLAX
+        // 6. SCROLL REVEAL & PARALLAX
         const heroBg = document.getElementById('hero-bg');
         window.addEventListener('scroll', () => {
             let scrolled = window.scrollY;
@@ -434,7 +413,7 @@
         }, { threshold: 0.1 });
         document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
 
-        // 8. MAGNETIC BUTTONS
+        // 7. MAGNETIC BUTTONS
         document.querySelectorAll('.magnetic').forEach(btn => {
             btn.addEventListener('mousemove', (e) => {
                 const pos = btn.getBoundingClientRect();
