@@ -8,7 +8,7 @@
     
     <style>
         /* ==============================
-           1. SECURITY & CORE
+           1. CORE & RESET
            ============================== */
         :root {
             --red: #D63426;
@@ -17,17 +17,9 @@
             --text: #e0e0e0;
         }
 
-        /* DISABLE SELECTION & COPYING */
         * {
             margin: 0; padding: 0; box-sizing: border-box;
-            cursor: none; /* Custom cursor only */
-            user-select: none;
-            -webkit-user-select: none;
-        }
-
-        img {
-            pointer-events: none;
-            -webkit-user-drag: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -35,73 +27,90 @@
             background-color: var(--bg);
             color: var(--text);
             overflow-x: hidden;
+            width: 100%;
         }
 
         html { scroll-behavior: smooth; }
 
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 3px; }
+        /* Custom Scrollbar (Desktop Only) */
+        @media (min-width: 769px) {
+            ::-webkit-scrollbar { width: 6px; }
+            ::-webkit-scrollbar-track { background: var(--bg); }
+            ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 3px; }
+            * { cursor: none; } /* Hide default cursor only on desktop */
+        }
+
+        img { pointer-events: none; -webkit-user-drag: none; display: block; }
 
         /* ==============================
-           2. NOISE OVERLAY
+           2. NOISE OVERLAY (Desktop Only)
            ============================== */
         .noise-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 9000; opacity: 0.05;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
+        @media (max-width: 768px) { .noise-overlay { display: none; } }
 
         /* ==============================
-           3. CUSTOM CURSOR
+           3. CUSTOM CURSOR (Desktop Only)
            ============================== */
-        .cursor-dot {
-            width: 8px; height: 8px; background: var(--red);
-            position: fixed; top: 0; left: 0; transform: translate(-50%, -50%);
-            border-radius: 50%; z-index: 10000; pointer-events: none;
-        }
-        .cursor-outline {
-            width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.3);
-            position: fixed; top: 0; left: 0; transform: translate(-50%, -50%);
-            border-radius: 50%; z-index: 9999; pointer-events: none;
-            transition: width 0.2s, height 0.2s, background 0.2s;
-        }
-        body.hovering .cursor-outline {
-            width: 60px; height: 60px; background: rgba(214, 52, 38, 0.1); border-color: var(--red);
+        .cursor-dot, .cursor-outline { display: none; }
+        
+        @media (min-width: 769px) {
+            .cursor-dot, .cursor-outline { display: block; }
+            .cursor-dot {
+                width: 8px; height: 8px; background: var(--red);
+                position: fixed; top: 0; left: 0; transform: translate(-50%, -50%);
+                border-radius: 50%; z-index: 10000; pointer-events: none;
+            }
+            .cursor-outline {
+                width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.3);
+                position: fixed; top: 0; left: 0; transform: translate(-50%, -50%);
+                border-radius: 50%; z-index: 9999; pointer-events: none;
+                transition: width 0.2s, height 0.2s, background 0.2s;
+            }
+            body.hovering .cursor-outline {
+                width: 60px; height: 60px; background: rgba(214, 52, 38, 0.1); border-color: var(--red);
+            }
         }
 
         /* ==============================
-           4. HEADER & NAV (SCRAMBLE EFFECT)
+           4. HEADER
            ============================== */
         header {
-            position: fixed; width: 100%; padding: 40px 60px;
+            position: fixed; width: 100%; padding: 30px 50px;
             display: flex; justify-content: space-between; align-items: center;
             z-index: 100; mix-blend-mode: exclusion;
+            transition: padding 0.3s;
         }
         .logo {
             font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 600;
             color: white; text-decoration: none; letter-spacing: 1px;
         }
-        nav ul { display: flex; gap: 50px; list-style: none; }
+        nav ul { display: flex; gap: 40px; list-style: none; }
         nav a {
             color: white; text-decoration: none; font-size: 0.9rem; text-transform: uppercase;
             letter-spacing: 2px; position: relative; font-family: 'Space Mono', monospace;
         }
-        
+
         /* ==============================
            5. HERO SECTION
            ============================== */
         .hero {
-            height: 100vh; display: flex; align-items: center; justify-content: center;
+            height: 100vh; /* Fallback */
+            height: 100svh; /* Mobile Friendly Height */
+            display: flex; align-items: center; justify-content: center;
             position: relative; overflow: hidden;
         }
         .hero-bg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            /* PLACEHOLDER FOR KITCHEN IMAGE */
             background: url('kitchen.png') center/cover;
-            opacity: 0.4; transform: scale(1.2); transition: transform 0.1s;
+            opacity: 0.4;
+            /* No scale animation on mobile to prevent lag */
+            transform: scale(1.1); 
         }
-        .hero-content { z-index: 2; text-align: center; mix-blend-mode: lighten; }
+        .hero-content { z-index: 2; text-align: center; mix-blend-mode: lighten; width: 100%; padding: 0 20px;}
         
         h1 {
             font-family: 'Cormorant Garamond', serif; font-size: 8vw; line-height: 0.9;
@@ -125,6 +134,7 @@
             width: 100%; overflow: hidden; padding: 20px 0; background: var(--red); color: #000;
             white-space: nowrap; position: relative; z-index: 5; transform: rotate(-2deg) scale(1.1);
             margin: 50px 0;
+            will-change: transform; /* Performance Hint */
         }
         .marquee-content {
             display: inline-block; animation: scrollLeft 20s linear infinite;
@@ -133,27 +143,27 @@
         @keyframes scrollLeft { to { transform: translateX(-50%); } }
 
         /* ==============================
-           7. GALLERY & 3D CARDS
+           7. GALLERY
            ============================== */
-        section { padding: 150px 0; position: relative; }
+        section { padding: 120px 0; position: relative; }
         .container { max-width: 1400px; margin: 0 auto; padding: 0 50px; }
 
         .big-text {
             font-family: 'Cormorant Garamond', serif; font-size: 3.5rem; line-height: 1.2;
-            margin-bottom: 80px; color: #333; transition: color 1.5s ease;
+            margin-bottom: 60px; color: #333; transition: color 1.5s ease;
         }
         .big-text.active { color: #fff; }
 
         .gallery-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px;
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 40px;
         }
 
         .art-card {
             background-color: var(--card-bg); border-radius: 8px; position: relative; overflow: hidden;
             border: 1px solid rgba(255,255,255,0.05); 
-            /* 3D TILT PREP */
-            transform-style: preserve-3d;
-            transform: perspective(1000px);
+            transition: transform 0.3s ease;
         }
         
         .card-image { height: 350px; width: 100%; overflow: hidden; position: relative; }
@@ -162,67 +172,88 @@
             transition: transform 0.5s, filter 0.3s;
             filter: grayscale(100%);
         }
-        .art-card:hover .card-image img { filter: grayscale(0%); transform: scale(1.1); }
         
-        .card-info { padding: 30px; transform: translateZ(20px); }
-        .card-info h3 { font-family: 'Cormorant Garamond'; font-size: 2rem; color: #fff; }
+        .card-info { padding: 30px; }
+        .card-info h3 { font-family: 'Cormorant Garamond'; font-size: 2rem; color: #fff; margin-bottom: 5px;}
         .card-info p { font-family: 'Space Mono'; font-size: 0.8rem; color: #666; }
 
-        /* MODAL */
+        /* Hover Effects (Desktop Only) */
+        @media (min-width: 769px) {
+            .art-card:hover { transform: translateY(-10px); }
+            .art-card:hover .card-image img { filter: grayscale(0%); transform: scale(1.1); }
+        }
+        /* Mobile State (Always Colored) */
+        @media (max-width: 768px) {
+            .card-image img { filter: grayscale(0%); }
+        }
+
+        /* ==============================
+           8. MODAL
+           ============================== */
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95); z-index: 20001; justify-content: center; align-items: center;
             opacity: 0; transition: opacity 0.3s ease;
+            -webkit-overflow-scrolling: touch;
         }
         .modal.active { display: flex; opacity: 1; }
         .modal-content {
-            background: #111; width: 90%; max-width: 900px; display: grid; grid-template-columns: 1fr 1fr;
+            background: #111; width: 95%; max-width: 900px; display: grid; grid-template-columns: 1fr 1fr;
             transform: scale(0.9); transition: transform 0.3s ease; border: 1px solid #333;
+            max-height: 90vh; overflow-y: auto; /* Scrollable on mobile */
+            border-radius: 4px;
         }
         .modal.active .modal-content { transform: scale(1); }
-        .modal-img { width: 100%; height: 100%; object-fit: cover; min-height: 500px; }
-        .modal-text { padding: 50px; display: flex; flex-direction: column; justify-content: center; }
-        .modal-text h2 { font-family: 'Cormorant Garamond'; color: var(--red); font-size: 3rem; margin-bottom: 20px; }
-        .modal-text p { font-family: 'Space Mono'; color: #ccc; line-height: 1.8; }
-        .close-btn { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 2rem; cursor: pointer; }
+        .modal-img { width: 100%; height: 100%; object-fit: cover; min-height: 400px; }
+        .modal-text { padding: 40px; display: flex; flex-direction: column; justify-content: center; }
+        .modal-text h2 { font-family: 'Cormorant Garamond'; color: var(--red); font-size: 2.5rem; margin-bottom: 20px; }
+        .modal-text p { font-family: 'Space Mono'; color: #ccc; line-height: 1.6; }
+        .close-btn { position: absolute; top: 15px; right: 15px; color: #fff; font-size: 2rem; cursor: pointer; z-index: 10; padding: 10px;}
 
         /* ==============================
-           8. DISH AI & FOOTER
+           9. MOBILE RESPONSIVE TWEAKS
            ============================== */
-        #dish-ai { text-align: center; padding: 150px 0; border-top: 1px solid #111; }
-        .hologram-text {
-            font-size: 4rem; font-family: 'Space Mono', monospace; color: transparent;
-            -webkit-text-stroke: 1px rgba(214, 52, 38, 0.5); opacity: 0.5; animation: flicker 3s infinite;
-        }
-        @keyframes flicker {
-            0% { opacity: 0.5; } 5% { opacity: 0.2; } 10% { opacity: 0.5; } 100% { opacity: 0.5; }
-        }
-        footer { padding: 50px; text-align: center; color: #444; font-family: 'Space Mono'; font-size: 0.8rem; border-top: 1px solid #111; }
-        @keyframes pulse { 0% {opacity: 0.5;} 50% {opacity: 1;} 100% {opacity: 0.5;} }
-        
         @media (max-width: 768px) {
-            .modal-content { grid-template-columns: 1fr; }
+            header { padding: 20px; background: rgba(5,5,5,0.9); flex-direction: column; gap: 15px;}
+            nav ul { gap: 20px; font-size: 0.8rem; }
+            
             .hero h1 { font-size: 15vw; }
+            .hero-bg { opacity: 0.3; }
+            
+            section { padding: 80px 0; }
+            .container { padding: 0 20px; }
+            
+            .big-text { font-size: 2rem; margin-bottom: 40px; }
+            
+            .gallery-grid { grid-template-columns: 1fr; gap: 30px; }
+            .card-image { height: 250px; }
+            
+            .modal-content { grid-template-columns: 1fr; }
+            .modal-img { height: 250px; min-height: auto; }
+            .modal-text { padding: 25px; }
+            
+            #studio div { grid-template-columns: 1fr; gap: 20px; margin-top: 20px; }
+            .marquee-container { margin: 30px 0; }
         }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
-    <div class="noise-overlay"></div>
+    <header>
+        <a href="#" class="logo magnetic">Roodan.</a>
+        <nav>
+            <ul>
+                <li><a href="#studio">The Studio</a></li>
+                <li><a href="#gallery">Dishes</a></li>
+                <li><a href="#dish-ai">Lab</a></li>
+            </ul>
+        </nav>
+    </header>
 
     <div class="cursor-dot"></div>
     <div class="cursor-outline"></div>
 
-    <header>
-        <a href="#" class="logo magnetic" data-strength="30">Roodan.</a>
-        <nav>
-            <ul>
-                <li><a href="#studio" class="scramble-link" data-value="The Studio">The Studio</a></li>
-                <li><a href="#gallery" class="scramble-link" data-value="Dishes">Dishes</a></li>
-                <li><a href="#dish-ai" class="scramble-link" data-value="Lab">Lab</a></li>
-            </ul>
-        </nav>
-    </header>
+    <div class="noise-overlay"></div>
 
     <section class="hero">
         <div class="hero-bg" id="hero-bg"></div>
@@ -286,8 +317,8 @@
     </section>
 
     <section id="dish-ai">
-        <div class="hologram-text">DISH AI</div>
-        <p style="margin-top: 20px; font-family: 'Space Mono'; font-size: 0.8rem; color: #444;">ANALYZING FLAVOR PROFILES...</p>
+        <h2 style="font-family: 'Space Mono'; font-size: 2rem; color: #333; margin-bottom: 20px;">DISH AI</h2>
+        <p style="font-family: 'Space Mono'; font-size: 0.8rem; color: #444;">ANALYZING FLAVOR PROFILES...</p>
     </section>
 
     <footer>&copy; 2024 ROODAN | COOKED WITH CODE</footer>
@@ -304,66 +335,84 @@
     </div>
 
     <script>
-        // 1. SECURITY (Block shortcuts)
-        document.onkeydown = function(e) {
-            if(event.keyCode == 123) { return false; } 
-            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { return false; }
-            if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) { return false; }
-            if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { return false; }
-            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { return false; }
+        // DETECT IF MOBILE
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+        // 1. SCRAMBLE TEXT EFFECT (Desktop Only to prevent touch flicker)
+        if (!isMobile) {
+            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            document.querySelectorAll("nav a").forEach(item => {
+                item.dataset.value = item.innerText; // Store original text
+                item.onmouseover = event => {
+                    let iteration = 0;
+                    clearInterval(event.target.interval);
+                    event.target.interval = setInterval(() => {
+                        event.target.innerText = event.target.innerText
+                            .split("").map((letter, index) => {
+                                if(index < iteration) return event.target.dataset.value[index];
+                                return letters[Math.floor(Math.random() * 26)];
+                            }).join("");
+                        if(iteration >= event.target.dataset.value.length) clearInterval(event.target.interval);
+                        iteration += 1 / 3;
+                    }, 30);
+                }
+            });
         }
 
-        // 2. SCRAMBLE TEXT EFFECT (ON HOVER)
-        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        
-        document.querySelectorAll(".scramble-link").forEach(item => {
-            item.onmouseover = event => {
-                let iteration = 0;
-                clearInterval(event.target.interval);
-
-                event.target.interval = setInterval(() => {
-                    event.target.innerText = event.target.innerText
-                        .split("")
-                        .map((letter, index) => {
-                            if(index < iteration) {
-                                return event.target.dataset.value[index];
-                            }
-                            return letters[Math.floor(Math.random() * 26)];
-                        })
-                        .join("");
-                    
-                    if(iteration >= event.target.dataset.value.length){ 
-                        clearInterval(event.target.interval);
-                    }
-                    
-                    iteration += 1 / 3;
-                }, 30);
-            }
-        });
-
-        // 3. 3D TILT EFFECT
-        const cards = document.querySelectorAll('.js-tilt');
-        cards.forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                
-                const rotateX = ((y - centerY) / centerY) * -10; // Max tilt deg
-                const rotateY = ((x - centerX) / centerX) * 10;
-
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        // 2. 3D TILT EFFECT (Desktop Only)
+        if (!isMobile) {
+            const cards = document.querySelectorAll('.js-tilt');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = ((y - centerY) / centerY) * -8;
+                    const rotateY = ((x - centerX) / centerX) * 8;
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = `perspective(1000px) rotateX(0) rotateY(0)`;
+                });
             });
+        }
 
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = `perspective(1000px) rotateX(0) rotateY(0)`;
+        // 3. CURSOR (Desktop Only)
+        if (!isMobile) {
+            const cursorDot = document.querySelector('.cursor-dot');
+            const cursorOutline = document.querySelector('.cursor-outline');
+            window.addEventListener('mousemove', (e) => {
+                const posX = e.clientX; const posY = e.clientY;
+                cursorDot.style.left = `${posX}px`; cursorDot.style.top = `${posY}px`;
+                cursorOutline.animate({ left: `${posX}px`, top: `${posY}px` }, { duration: 500, fill: "forwards" });
             });
-        });
+            document.querySelectorAll('a, .art-card, .close-btn').forEach(el => {
+                el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+                el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+            });
+        }
 
-        // 4. MODAL LOGIC
+        // 4. PARALLAX (Desktop Only - Mobile Parallax causes jitter)
+        if (!isMobile) {
+            const heroBg = document.getElementById('hero-bg');
+            window.addEventListener('scroll', () => {
+                let scrolled = window.scrollY;
+                heroBg.style.transform = `scale(${1.2 + scrolled * 0.0005})`;
+                heroBg.style.opacity = `${0.4 - scrolled * 0.001}`;
+            });
+        }
+
+        // 5. SCROLL REVEAL (Works on both)
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+
+        // 6. MODAL LOGIC (Universal)
         const modal = document.getElementById('dish-modal');
         const modalImg = document.getElementById('modal-img');
         const modalTitle = document.getElementById('modal-title');
@@ -375,54 +424,16 @@
             modalDesc.innerText = desc;
             modal.style.display = 'flex';
             setTimeout(() => { modal.classList.add('active'); }, 10);
-            document.body.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden'; // Stop background scrolling
         }
 
         function closeModal() {
             modal.classList.remove('active');
             setTimeout(() => { modal.style.display = 'none'; }, 300);
-            document.body.style.overflow = 'auto';
+            document.body.style.overflow = 'auto'; // Restore scrolling
         }
         window.onclick = function(event) { if (event.target == modal) closeModal(); }
 
-        // 5. CURSOR
-        const cursorDot = document.querySelector('.cursor-dot');
-        const cursorOutline = document.querySelector('.cursor-outline');
-        window.addEventListener('mousemove', (e) => {
-            const posX = e.clientX; const posY = e.clientY;
-            cursorDot.style.left = `${posX}px`; cursorDot.style.top = `${posY}px`;
-            cursorOutline.animate({ left: `${posX}px`, top: `${posY}px` }, { duration: 500, fill: "forwards" });
-        });
-        document.querySelectorAll('a, .art-card, .close-btn').forEach(el => {
-            el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
-            el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
-        });
-
-        // 6. SCROLL REVEAL & PARALLAX
-        const heroBg = document.getElementById('hero-bg');
-        window.addEventListener('scroll', () => {
-            let scrolled = window.scrollY;
-            heroBg.style.transform = `scale(${1.2 + scrolled * 0.0005})`;
-            heroBg.style.opacity = `${0.4 - scrolled * 0.001}`;
-        });
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) entry.target.classList.add('active');
-            });
-        }, { threshold: 0.1 });
-        document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
-
-        // 7. MAGNETIC BUTTONS
-        document.querySelectorAll('.magnetic').forEach(btn => {
-            btn.addEventListener('mousemove', (e) => {
-                const pos = btn.getBoundingClientRect();
-                const x = e.clientX - pos.left - pos.width / 2;
-                const y = e.clientY - pos.top - pos.height / 2;
-                btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
-            });
-            btn.addEventListener('mouseleave', () => btn.style.transform = 'translate(0px, 0px)');
-        });
     </script>
 </body>
 </html>
