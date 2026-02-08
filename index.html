@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roodan | Culinary Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@200;300;400&family=Space+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==============================
+           1. SECURITY & CORE
+           ============================== */
+        :root {
+            --red: #D63426;
+            --bg: #050505;
+            --card-bg: #101010;
+            --text: #e0e0e0;
+        }
+
+        /* DISABLE SELECTION & COPYING */
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            cursor: none; /* Custom cursor only */
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        img {
+            pointer-events: none;
+            -webkit-user-drag: none;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 3px; }
+
+        /* ==============================
+           2. NOISE & LOADER
+           ============================== */
+        .noise-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 9000; opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        .loader-curtain {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 20000;
+            display: flex; justify-content: center; align-items: center;
+            transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+        .loader-curtain.slide-up { transform: translateY(-100%); }
+        .loader-text {
+            font-family: 'Cormorant Garamond'; color: var(--red); font-size: 2rem;
+            animation: pulse 1s infinite;
+        }
+
+        /* ==============================
+           3. CUSTOM CURSOR
+           ============================== */
+        .cursor-dot {
+            width: 8px; height: 8px; background: var(--red);
+            position: fixed; top: 0; left: 0; transform: translate(-50%, -50%);
+            border-radius: 50%; z-index: 10000; pointer-events: none;
+        }
+        .cursor-outline {
+            width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.3);
+            position: fixed; top: 0; left: 0; transform: translate(-50%, -50%);
+            border-radius: 50%; z-index: 9999; pointer-events: none;
+            transition: width 0.2s, height 0.2s, background 0.2s;
+        }
+        body.hovering .cursor-outline {
+            width: 60px; height: 60px; background: rgba(214, 52, 38, 0.1); border-color: var(--red);
+        }
+
+        /* ==============================
+           4. HEADER & NAV (SCRAMBLE EFFECT)
+           ============================== */
+        header {
+            position: fixed; width: 100%; padding: 40px 60px;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 100; mix-blend-mode: exclusion;
+        }
+        .logo {
+            font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 600;
+            color: white; text-decoration: none; letter-spacing: 1px;
+        }
+        nav ul { display: flex; gap: 50px; list-style: none; }
+        nav a {
+            color: white; text-decoration: none; font-size: 0.9rem; text-transform: uppercase;
+            letter-spacing: 2px; position: relative; font-family: 'Space Mono', monospace;
+        }
+        
+        /* ==============================
+           5. HERO SECTION
+           ============================== */
+        .hero {
+            height: 100vh; display: flex; align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
+        }
+        .hero-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            /* PLACEHOLDER FOR KITCHEN IMAGE */
+            background: url('kitchen.png') center/cover;
+            opacity: 0.4; transform: scale(1.2); transition: transform 0.1s;
+        }
+        .hero-content { z-index: 2; text-align: center; mix-blend-mode: lighten; }
+        
+        h1 {
+            font-family: 'Cormorant Garamond', serif; font-size: 8vw; line-height: 0.9;
+            font-weight: 300; color: #fff; overflow: hidden;
+        }
+        .reveal-text {
+            display: block; transform: translateY(100%); 
+            animation: slideUpText 1s cubic-bezier(0.77, 0, 0.175, 1) forwards 1s;
+        }
+        .reveal-text-2 {
+            display: block; transform: translateY(100%);
+            animation: slideUpText 1s cubic-bezier(0.77, 0, 0.175, 1) forwards 1.2s;
+            color: var(--red); font-style: italic;
+        }
+        @keyframes slideUpText { to { transform: translateY(0); } }
+
+        /* ==============================
+           6. MARQUEE
+           ============================== */
+        .marquee-container {
+            width: 100%; overflow: hidden; padding: 20px 0; background: var(--red); color: #000;
+            white-space: nowrap; position: relative; z-index: 5; transform: rotate(-2deg) scale(1.1);
+            margin: 50px 0;
+        }
+        .marquee-content {
+            display: inline-block; animation: scrollLeft 20s linear infinite;
+            font-family: 'Space Mono'; font-weight: bold; font-size: 1.5rem; text-transform: uppercase;
+        }
+        @keyframes scrollLeft { to { transform: translateX(-50%); } }
+
+        /* ==============================
+           7. GALLERY & 3D CARDS
+           ============================== */
+        section { padding: 150px 0; position: relative; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 50px; }
+
+        .big-text {
+            font-family: 'Cormorant Garamond', serif; font-size: 3.5rem; line-height: 1.2;
+            margin-bottom: 80px; color: #333; transition: color 1.5s ease;
+        }
+        .big-text.active { color: #fff; }
+
+        .gallery-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px;
+        }
+
+        .art-card {
+            background-color: var(--card-bg); border-radius: 8px; position: relative; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05); 
+            /* 3D TILT PREP */
+            transform-style: preserve-3d;
+            transform: perspective(1000px);
+        }
+        
+        .card-image { height: 350px; width: 100%; overflow: hidden; position: relative; }
+        .card-image img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.5s, filter 0.3s;
+            filter: grayscale(100%);
+        }
+        .art-card:hover .card-image img { filter: grayscale(0%); transform: scale(1.1); }
+        
+        .card-info { padding: 30px; transform: translateZ(20px); }
+        .card-info h3 { font-family: 'Cormorant Garamond'; font-size: 2rem; color: #fff; }
+        .card-info p { font-family: 'Space Mono'; font-size: 0.8rem; color: #666; }
+
+        /* MODAL */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 20001; justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .modal.active { display: flex; opacity: 1; }
+        .modal-content {
+            background: #111; width: 90%; max-width: 900px; display: grid; grid-template-columns: 1fr 1fr;
+            transform: scale(0.9); transition: transform 0.3s ease; border: 1px solid #333;
+        }
+        .modal.active .modal-content { transform: scale(1); }
+        .modal-img { width: 100%; height: 100%; object-fit: cover; min-height: 500px; }
+        .modal-text { padding: 50px; display: flex; flex-direction: column; justify-content: center; }
+        .modal-text h2 { font-family: 'Cormorant Garamond'; color: var(--red); font-size: 3rem; margin-bottom: 20px; }
+        .modal-text p { font-family: 'Space Mono'; color: #ccc; line-height: 1.8; }
+        .close-btn { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 2rem; cursor: pointer; }
+
+        /* ==============================
+           8. DISH AI & FOOTER
+           ============================== */
+        #dish-ai { text-align: center; padding: 150px 0; border-top: 1px solid #111; }
+        .hologram-text {
+            font-size: 4rem; font-family: 'Space Mono', monospace; color: transparent;
+            -webkit-text-stroke: 1px rgba(214, 52, 38, 0.5); opacity: 0.5; animation: flicker 3s infinite;
+        }
+        @keyframes flicker {
+            0% { opacity: 0.5; } 5% { opacity: 0.2; } 10% { opacity: 0.5; } 100% { opacity: 0.5; }
+        }
+        footer { padding: 50px; text-align: center; color: #444; font-family: 'Space Mono'; font-size: 0.8rem; border-top: 1px solid #111; }
+        @keyframes pulse { 0% {opacity: 0.5;} 50% {opacity: 1;} 100% {opacity: 0.5;} }
+        
+        @media (max-width: 768px) {
+            .modal-content { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 15vw; }
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <div class="loader-curtain" id="loader">
+        <div class="loader-text">ROODAN</div>
+    </div>
+
+    <div class="noise-overlay"></div>
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <header>
+        <a href="#" class="logo magnetic" data-strength="30">Roodan.</a>
+        <nav>
+            <ul>
+                <li><a href="#studio" class="scramble-link" data-value="The Studio">The Studio</a></li>
+                <li><a href="#gallery" class="scramble-link" data-value="Dishes">Dishes</a></li>
+                <li><a href="#dish-ai" class="scramble-link" data-value="Lab">Lab</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-bg" id="hero-bg"></div>
+        <div class="hero-content">
+            <h1>
+                <span class="reveal-text">Flavor is my</span>
+                <span class="reveal-text-2">Medium</span>
+            </h1>
+        </div>
+    </section>
+
+    <div class="marquee-container">
+        <div class="marquee-content">
+            EXPERIENCE • TASTE • ARTISTRY • PASSION • INNOVATION • TEXTURE • AROMA • EXPERIENCE • TASTE • ARTISTRY • PASSION • INNOVATION • TEXTURE • AROMA •
+        </div>
+    </div>
+
+    <section id="studio">
+        <div class="container">
+            <h2 class="big-text scroll-reveal">"The plate is my canvas, and nature provides the paint. I cook to create, not to serve."</h2>
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 50px; margin-top: 50px;">
+                <p style="color: #888; line-height: 1.8; font-family: 'Space Mono', monospace;">
+                    This website serves as a digital archive of my culinary experiments. No reservations, no menus—just a pure showcase of what happens when passion meets ingredients.
+                </p>
+                <div style="height: 1px; background: #222; align-self: center;"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery">
+        <div class="container">
+            <h2 class="big-text scroll-reveal">Selected Dishes</h2>
+            <div class="gallery-grid" id="gallery-grid">
+                
+                <div class="art-card js-tilt" onclick="openModal('The Cloud', 'A study in texture. Egg whites are whipped to an ethereal, cloud-like peak and gently baked, cradling a rich, molten yolk. Finished with a dusting of oregano, cracked black pepper, and a savory reduction.', 'eggs.png')">
+                    <div class="card-image"><img src="eggs.png" alt="The Cloud"></div>
+                    <div class="card-info">
+                        <h3>The Cloud</h3>
+                        <p>WHIPPED EGG & OREGANO</p>
+                    </div>
+                </div>
+
+                <div class="art-card js-tilt" onclick="openModal('Crimson Fusion', 'A bold fusion of delicacy and fire. The airy texture of the Cloud Egg is deconstructed and draped in a robust, fermentation-forward Kimchi curry, adding layers of umami and heat.', 'eggs2.png')">
+                    <div class="card-image"><img src="eggs2.png" alt="Crimson Fusion"></div>
+                    <div class="card-info">
+                        <h3>Crimson Fusion</h3>
+                        <p>EGG & KIMCHI CURRY</p>
+                    </div>
+                </div>
+
+                <div class="art-card js-tilt" onclick="openModal('Golden Earth', 'Simplicity elevated. Potatoes are flash-fried to a golden crisp, then dry-roasted to remove excess oil. Seasoned purely with sea salt, cracked pepper, and oregano to highlight the earthiness of the tuber.', 'potatoes.png')">
+                    <div class="card-image"><img src="potatoes.png" alt="Golden Earth"></div>
+                    <div class="card-info">
+                        <h3>Golden Earth</h3>
+                        <p>TWICE-COOKED POTATO</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="dish-ai">
+        <div class="hologram-text">DISH AI</div>
+        <p style="margin-top: 20px; font-family: 'Space Mono'; font-size: 0.8rem; color: #444;">ANALYZING FLAVOR PROFILES...</p>
+    </section>
+
+    <footer>&copy; 2024 ROODAN | COOKED WITH CODE</footer>
+
+    <div id="dish-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <img id="modal-img" class="modal-img" src="" alt="Dish">
+            <div class="modal-text">
+                <h2 id="modal-title">Title</h2>
+                <p id="modal-desc">Description</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. SECURITY (Block shortcuts)
+        document.onkeydown = function(e) {
+            if(event.keyCode == 123) { return false; } 
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { return false; }
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) { return false; }
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { return false; }
+            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { return false; }
+        }
+
+        // 2. LOADER
+        window.onload = () => {
+            setTimeout(() => { document.getElementById('loader').classList.add('slide-up'); }, 1000);
+        }
+
+        // 3. SCRAMBLE TEXT EFFECT (ON HOVER)
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        
+        document.querySelectorAll(".scramble-link").forEach(item => {
+            item.onmouseover = event => {
+                let iteration = 0;
+                clearInterval(event.target.interval);
+
+                event.target.interval = setInterval(() => {
+                    event.target.innerText = event.target.innerText
+                        .split("")
+                        .map((letter, index) => {
+                            if(index < iteration) {
+                                return event.target.dataset.value[index];
+                            }
+                            return letters[Math.floor(Math.random() * 26)];
+                        })
+                        .join("");
+                    
+                    if(iteration >= event.target.dataset.value.length){ 
+                        clearInterval(event.target.interval);
+                    }
+                    
+                    iteration += 1 / 3;
+                }, 30);
+            }
+        });
+
+        // 4. 3D TILT EFFECT
+        const cards = document.querySelectorAll('.js-tilt');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = ((y - centerY) / centerY) * -10; // Max tilt deg
+                const rotateY = ((x - centerX) / centerX) * 10;
+
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0) rotateY(0)`;
+            });
+        });
+
+        // 5. MODAL LOGIC
+        const modal = document.getElementById('dish-modal');
+        const modalImg = document.getElementById('modal-img');
+        const modalTitle = document.getElementById('modal-title');
+        const modalDesc = document.getElementById('modal-desc');
+
+        function openModal(title, desc, imgSrc) {
+            modalImg.src = imgSrc;
+            modalTitle.innerText = title;
+            modalDesc.innerText = desc;
+            modal.style.display = 'flex';
+            setTimeout(() => { modal.classList.add('active'); }, 10);
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            setTimeout(() => { modal.style.display = 'none'; }, 300);
+            document.body.style.overflow = 'auto';
+        }
+        window.onclick = function(event) { if (event.target == modal) closeModal(); }
+
+        // 6. CURSOR
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX; const posY = e.clientY;
+            cursorDot.style.left = `${posX}px`; cursorDot.style.top = `${posY}px`;
+            cursorOutline.animate({ left: `${posX}px`, top: `${posY}px` }, { duration: 500, fill: "forwards" });
+        });
+        document.querySelectorAll('a, .art-card, .close-btn').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+        });
+
+        // 7. SCROLL REVEAL & PARALLAX
+        const heroBg = document.getElementById('hero-bg');
+        window.addEventListener('scroll', () => {
+            let scrolled = window.scrollY;
+            heroBg.style.transform = `scale(${1.2 + scrolled * 0.0005})`;
+            heroBg.style.opacity = `${0.4 - scrolled * 0.001}`;
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+
+        // 8. MAGNETIC BUTTONS
+        document.querySelectorAll('.magnetic').forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const pos = btn.getBoundingClientRect();
+                const x = e.clientX - pos.left - pos.width / 2;
+                const y = e.clientY - pos.top - pos.height / 2;
+                btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+            });
+            btn.addEventListener('mouseleave', () => btn.style.transform = 'translate(0px, 0px)');
+        });
+    </script>
+</body>
+</html>
